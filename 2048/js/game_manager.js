@@ -1,8 +1,9 @@
-function GameManager(size, InputManager, Actuator, StorageManager) {
+function GameManager(size, InputManager, Actuator, StorageManager, WebsocketHandler) {
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
+  this.websocket      = new WebsocketHandler;
 
   this.startTiles     = 2;
 
@@ -56,6 +57,9 @@ GameManager.prototype.setup = function () {
 
   // Update the actuator
   this.actuate();
+
+  // test send message
+  this.testSendMessage();
 };
 
 // Set up the initial tiles to start the game with
@@ -269,4 +273,8 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
+};
+
+GameManager.prototype.testSendMessage = function () {
+  this.websocket.connect();
 };
