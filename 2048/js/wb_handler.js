@@ -1,39 +1,45 @@
-function WebsocketHandler() {
-    this.conn;
+function Websocket() {
+  this.conn;
+  this.onMessageCallBack;
 }
 
-WebsocketHandler.prototype.connect = function () {
-    console.log("WebsocketHandler.prototype.connect");
-    var self = this;
-    if (!window["WebSocket"]) {
-        alert("Your browser does not support WebSockets.");
-        return;
-    }
-    if (self.conn) {
-        return;
-    }
-    var protocol="ws://";
-    if(window.location.protocol=="https:"){
-        protocol="wss://";
-    }
-    self.conn = new WebSocket(protocol+window.location.host+"/ai");
-    self.conn.onopen = function(e) {
-        console.log("Connection open ..." + e.data);
-    };
-    self.conn.onmessage = function(evt) {
-        console.log( "Received Message: " + evt.data);
-    };
-    self.conn.onclose = function(evt) {
-        console.log(evt);
-    };
+Websocket.prototype.connect = function () {
+  console.log("WebsocketHandler.prototype.connect");
+  var self = this;
+  if (!window["WebSocket"]) {
+    alert("Your browser does not support WebSockets.");
+    return;
+  }
+  if (self.conn) {
+    return;
+  }
+  var protocol = "ws://";
+  if (window.location.protocol == "https:") {
+    protocol = "wss://";
+  }
+  self.conn = new WebSocket(protocol + window.location.host + "/ai");
+  self.conn.onopen = function (e) {
+    console.log("Connection open ..." + e.data);
+  };
 
-    console.log("success");
-    setTimeout(function(){
-        console.log("try to send some message");
-        self.conn.send("hehe");
-        self.conn.send("hehe2");
-        self.conn.send("hehe23");
-    }, 2000);
+  self.conn.onclose = function (evt) {
+    console.log(evt);
+  };
+  console.log("cnonect success");
+};
 
+Websocket.prototype.onMessage = function(f) {
+  if (!this.conn) {
+    console.error("not connect");
+    return;
+  }
+  this.conn.onmessage = f;
+};
 
+Websocket.prototype.send = function(data) {
+  this.conn.send(data);
+};
+
+Websocket.prototype.close = function () {
+  this.conn.close();
 };

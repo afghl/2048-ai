@@ -1,12 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/afghl/2048-ai/lib"
 	"github.com/gorilla/websocket"
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 )
 
 var (
@@ -23,10 +26,10 @@ func main() {
 	http.Handle("/meta/", static)
 	http.Handle("/favicon.ico", static)
 
-	indexTpl := template.Must(template.ParseFiles("./2048/index.html"))
+	html := template.Must(template.ParseFiles("./2048/index.html"))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		indexTpl.Execute(w, nil)
+		_ = html.Execute(w, nil)
 	})
 
 	log.Printf("Service started on \x1b[32;1m%s\x1b[32;1m\x1b[0m\n", *addr)
@@ -41,6 +44,15 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+type req struct {
+	Size int     `json:"size"`
+	Grid [][]int `json:"grid"`
+}
+
+type rsp struct {
+	Act int `json:"act"`
+}
+
 func ai(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("in ai method \n")
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -49,16 +61,23 @@ func ai(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer ws.Close()
-	for {
-		messageType, p, err := ws.ReadMessage()
+	agent := lib.NewAgent()
+	for i := 0; i < 100000; i++ {
+		_, p, err := ws.ReadMessage()
+		time.Sleep(50 * time.Millisecond)
 		if err != nil {
 			break
 		}
-		fmt.Printf("read message from wb, %v, %s \n", messageType, string(p))
-		// write back
-		str := string(p)
-		if err := ws.WriteMessage(websocket.TextMessage, []byte("echo: "+str)); err != nil {
-			fmt.Errorf("write message error: %v \n", err)
+		m := &req{}
+		if err := json.Unmarshal(p, m); err != nil {
+			fmt.Errorf("unmarshal error, %v \n", err)
+			return
+		}
+		state := lib.NewState(m.Grid)
+		act := agent.GetAction(state)
+		r, _ := json.Marshal(rsp{Act: int(act)})
+		if err := ws.WriteMessage(websocket.TextMessage, r); err != nil {
+			fmt.Errorf("write req error: %v \n", err)
 		}
 	}
 }

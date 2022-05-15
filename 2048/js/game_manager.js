@@ -1,15 +1,16 @@
-function GameManager(size, InputManager, Actuator, StorageManager, WebsocketHandler) {
+function GameManager(size, InputManager, Actuator, StorageManager, Websocket) {
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
-  this.websocket      = new WebsocketHandler;
+  this.websocket      = new Websocket;
 
   this.startTiles     = 2;
 
   this.inputManager.on("move", this.move.bind(this));
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+  this.inputManager.on("autoRun", this.autoRun.bind(this));
 
   this.setup();
 }
@@ -59,7 +60,7 @@ GameManager.prototype.setup = function () {
   this.actuate();
 
   // test send message
-  this.testSendMessage();
+  this.connect();
 };
 
 // Set up the initial tiles to start the game with
@@ -188,8 +189,8 @@ GameManager.prototype.move = function (direction) {
 
     if (!this.movesAvailable()) {
       this.over = true; // Game over!
+      this.websocket.close();
     }
-
     this.actuate();
   }
 };
@@ -275,6 +276,25 @@ GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
 };
 
-GameManager.prototype.testSendMessage = function () {
+GameManager.prototype.connect = function () {
   this.websocket.connect();
+};
+
+GameManager.prototype.autoRun = function () {
+  var self = this;
+  self.websocket.onMessage(function (event) {
+    var rsp = JSON.parse(event.data);
+    self.move(rsp.act);
+    self.sendState();
+  });
+  self.sendState();
+};
+
+GameManager.prototype.sendState = function () {
+  if (this.over) {
+    console.log("stop sending state");
+    return;
+  }
+  var state = {size: this.size, grid: this.grid.asArray()};
+  this.websocket.send(JSON.stringify(state));
 };

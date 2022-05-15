@@ -517,7 +517,7 @@ hr {
   line-height: 42px;
   margin-bottom: 0; }
 
-.restart-button {
+.btn {
   display: inline-block;
   background: #8f7a66;
   border-radius: 3px;
@@ -529,6 +529,10 @@ hr {
   display: block;
   text-align: center;
   float: right; }
+
+.autorun-button {
+  margin-top: 10px;
+}
 
 .game-explanation {
   margin-top: 50px; }
@@ -756,3 +760,38 @@ hr {
     margin-top: 90px !important; }
   .game-message .lower {
     margin-top: 30px !important; } }
+
+.ai-button {
+  display: inline-block;
+  background: #8f7a66;
+  border-radius: 3px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #f9f6f2;
+  height: 40px;
+  line-height: 42px;
+  display: block;
+  text-align: center;
+  float: left;
+  width: 20%;
+  padding: 0;
+  box-sizing: border-box;
+  margin-top: 2px;
+}
+
+.hint-button {
+  display: inline-block;
+  background: #8f7a66;
+  border-radius: 3px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #f9f6f2;
+  height: 40px;
+  line-height: 42px;
+  text-align: center;
+  float: none;
+  width: 20%;
+  padding: 0;
+  box-sizing: border-box;
+  margin-top: 2px;
+}
