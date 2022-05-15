@@ -1,6 +1,9 @@
 package lib
 
-import "github.com/afghl/2048-ai/utils"
+import (
+	"fmt"
+	"github.com/afghl/2048-ai/utils"
+)
 
 type GameState struct {
 	Size int
@@ -37,6 +40,16 @@ func (s *GameState) GenerateRandomTileState() []GameState {
 		}
 	}
 	return arr
+}
+
+func (s *GameState) TileSum() int {
+	sum := 0
+	for i := 0; i < len(s.Grid); i++ {
+		for j := 0; j < len(s.Grid[i]); j++ {
+			sum += s.Grid[i][j] * s.Grid[i][j]
+		}
+	}
+	return sum
 }
 
 func generateTileState(state GameState, x, y, tile int, weight float32) GameState {
@@ -125,4 +138,15 @@ func move(grid [][]int, direction Direction) [][]int {
 		}
 	}
 	return data
+}
+
+func (s *GameState) gridFmt() string {
+	str := "\n"
+	for i := 0; i < len(s.Grid); i++ {
+		for j := 0; j < len(s.Grid[i]); j++ {
+			str += fmt.Sprintf("%v,", s.Grid[i][j])
+		}
+		str += "\n"
+	}
+	return str
 }

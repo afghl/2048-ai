@@ -61,10 +61,10 @@ func ai(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer ws.Close()
-	agent := lib.NewAgent()
+	agent := lib.NewAgent(4)
 	for i := 0; i < 100000; i++ {
 		_, p, err := ws.ReadMessage()
-		timer := time.NewTimer(300 * time.Millisecond)
+		timer := time.NewTimer(200 * time.Millisecond)
 		if err != nil {
 			break
 		}
@@ -73,7 +73,7 @@ func ai(w http.ResponseWriter, r *http.Request) {
 			fmt.Errorf("unmarshal error, %v \n", err)
 			return
 		}
-		state := lib.NewState(m.Grid)
+		state := lib.NewState(m.Size, m.Grid, 1)
 		act := agent.GetAction(state)
 		r, _ := json.Marshal(rsp{Act: int(act)})
 		<-timer.C

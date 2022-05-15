@@ -12,5 +12,5 @@ type base struct {
 }
 
 func (b *base) Evaluate(state GameState) int {
-	return 1
+	return state.TileSum()
 }

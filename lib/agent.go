@@ -1,21 +1,25 @@
 package lib
 
-import "math"
+import (
+	"math"
+)
 
 type Agent struct {
 	depth     int // how far do we look for the best action
 	evaluator Evaluator
 }
 
-func NewAgent() *Agent {
-	return &Agent{depth: 3, evaluator: BaseEvaluator()}
+func NewAgent(depth int) *Agent {
+	return &Agent{depth: depth, evaluator: BaseEvaluator()}
 }
 
 func (a *Agent) GetAction(gameState GameState) Direction {
 	act := NONE
 	max := math.MinInt
 	for _, action := range gameState.GetLegalActions() {
+		// TODO: some state might not be valid.
 		nextState := gameState.SuccessorState(action)
+		//fmt.Printf("GetAction..next state is: %v, action: %v\n", nextState.Grid, action)
 		v := a.value(nextState, false, 0)
 		if v > max {
 			max = v
@@ -25,15 +29,17 @@ func (a *Agent) GetAction(gameState GameState) Direction {
 	return act
 }
 
-func (a *Agent) value(state GameState, arrowMove bool, depth int) int {
+func (a *Agent) value(state GameState, directionMove bool, depth int) int {
+	//fmt.Printf("current state: %v, directionMove: %v, depth: %v \n", state.gridFmt(), directionMove, depth)
 	if depth == a.depth {
 		return a.evaluator.Evaluate(state)
 	}
 	var value int
-	if arrowMove {
+	// if it is a direction action, then select a max value, else select an expected value
+	if directionMove {
 		value = a.maxValue(state, depth)
 	} else {
-		value = a.avgValue(state, depth-1)
+		value = a.avgValue(state, depth+1)
 	}
 	return value
 }
@@ -42,7 +48,8 @@ func (a *Agent) maxValue(gameState GameState, depth int) int {
 	max := math.MinInt
 	for _, action := range gameState.GetLegalActions() {
 		nextState := gameState.SuccessorState(action)
-		if v := a.value(nextState, true, depth); v > max {
+		//fmt.Printf("maxValue..next state is: %v, action: %v\n", nextState.Grid, Direction(action))
+		if v := a.value(nextState, false, depth); v > max {
 			max = v
 		}
 	}
@@ -54,8 +61,11 @@ func (a *Agent) avgValue(gameState GameState, depth int) int {
 	tileStates := gameState.GenerateRandomTileState()
 
 	for _, state := range tileStates {
-		value := a.value(state, false, depth)
+		//fmt.Printf("get a value of a tile state: %v, depth: %v \n", state, depth)
+		value := a.value(state, true, depth)
 		sum += float32(value) * state.Weight
 	}
-	return int(sum / float32(len(tileStates)))
+	value := int(sum / float32(len(tileStates)))
+	//fmt.Printf("avg..depth is: %v, tileState size: %v, sum:%v, value:%v \n", depth, len(tileStates), sum, value)
+	return value
 }
