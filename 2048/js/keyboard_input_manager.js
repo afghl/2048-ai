@@ -54,7 +54,6 @@ KeyboardInputManager.prototype.listen = function () {
     var modifiers = event.altKey || event.ctrlKey || event.metaKey ||
                     event.shiftKey;
     var mapped    = map[event.which];
-
     if (!modifiers) {
       if (mapped !== undefined) {
         event.preventDefault();
@@ -72,6 +71,7 @@ KeyboardInputManager.prototype.listen = function () {
   this.bindButtonPress(".retry-button", this.restart);
   this.bindButtonPress(".restart-button", this.restart);
   this.bindButtonPress(".keep-playing-button", this.keepPlaying);
+  this.bindButtonPress(".autorun-button", this.autoRun);
 
   // Respond to swipe events
   var touchStartClientX, touchStartClientY;
@@ -141,4 +141,9 @@ KeyboardInputManager.prototype.bindButtonPress = function (selector, fn) {
   var button = document.querySelector(selector);
   button.addEventListener("click", fn.bind(this));
   button.addEventListener(this.eventTouchend, fn.bind(this));
+};
+
+KeyboardInputManager.prototype.autoRun = function (event) {
+  event.preventDefault();
+  this.emit("autoRun");
 };

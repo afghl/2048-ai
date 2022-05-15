@@ -47,7 +47,7 @@ Grid.prototype.availableCells = function () {
 
   this.eachCell(function (x, y, tile) {
     if (!tile) {
-      cells.push({ x: x, y: y });
+      cells.push({x: x, y: y});
     }
   });
 
@@ -96,7 +96,7 @@ Grid.prototype.removeTile = function (tile) {
 
 Grid.prototype.withinBounds = function (position) {
   return position.x >= 0 && position.x < this.size &&
-         position.y >= 0 && position.y < this.size;
+    position.y >= 0 && position.y < this.size;
 };
 
 Grid.prototype.serialize = function () {
@@ -114,4 +114,22 @@ Grid.prototype.serialize = function () {
     size: this.size,
     cells: cellState
   };
+};
+
+Grid.prototype.asArray = function () {
+  var data = new Array();
+  for (i = 0; i <= this.size - 1; i++) {
+    data[i] = new Array();
+  }
+  for (i = 0; i <= this.size - 1; i++) {
+    var cells = this.cells[i];
+    for (j = 0; j <= this.size - 1; j++) {
+      if (cells[j]) {
+        data[j][i] = cells[j].value;
+      } else {
+        data[j][i] = 0;
+      }
+    }
+  }
+  return data;
 };
