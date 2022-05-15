@@ -284,7 +284,11 @@ GameManager.prototype.autoRun = function () {
   var self = this;
   self.websocket.onMessage(function (event) {
     var rsp = JSON.parse(event.data);
-    self.move(rsp.act);
+    if (rsp.act >= 0) {
+      self.move(rsp.act);
+    } else {
+      console.log("not valid action!");
+    }
     self.sendState();
   });
   self.sendState();

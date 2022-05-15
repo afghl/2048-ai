@@ -1,12 +1,14 @@
 package lib
 
-type Action int
+type Direction int
 
-var (
-	UP    Action = 0
-	RIGHT Action = 1
-	DOWN  Action = 2
-	LEFT  Action = 3
+const (
+	UP Direction = iota
+	RIGHT
+	DOWN
+	LEFT
+
+	NONE Direction = -1
 )
 
-var actions = []Action{UP, RIGHT, DOWN, LEFT}
+var actions = []Direction{UP, RIGHT, DOWN, LEFT}
