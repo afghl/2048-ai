@@ -19,7 +19,7 @@ func (b *monotonicSmoothnessEvaluator) Evaluate(state GameState) float64 {
 	um, dm, lm, rm := getMonotonic(state)
 	monotonic := math.Min(um, dm) + math.Min(lm, rm)
 	emptyCells := emptyCellsCount(state)
-	return emptyCells*2.7 - monotonic*0.1
+	return math.Log(emptyCells)*2.7 - monotonic*0.1
 }
 
 func getMonotonic(state GameState) (float64, float64, float64, float64) {
@@ -74,11 +74,11 @@ func getMonotonic(state GameState) (float64, float64, float64, float64) {
 	return um, dm, lm, rm
 }
 
-func logValue(cellValue int) float64 {
-	if cellValue == 0 {
+func logValue(v int) float64 {
+	if v == 0 {
 		return 0
 	} else {
-		return math.Log(float64(cellValue)) / math.Log(2.0)
+		return math.Log(float64(v)) / math.Log(2.0)
 	}
 }
 
