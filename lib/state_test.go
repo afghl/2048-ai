@@ -51,7 +51,7 @@ func Test_move(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := move(tt.args.grid, tt.args.direction); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("move() = %v, want %v", got, tt.want)
+				t.Errorf("move() = %v, isNot %v", got, tt.want)
 			}
 		})
 	}

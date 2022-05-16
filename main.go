@@ -61,10 +61,10 @@ func ai(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer ws.Close()
-	agent := lib.NewAgent(4)
+	agent := lib.NewAgent(3)
 	for {
 		_, p, err := ws.ReadMessage()
-		timer := time.NewTimer(100 * time.Millisecond)
+		timer := time.NewTimer(1 * time.Millisecond)
 		if err != nil {
 			break
 		}

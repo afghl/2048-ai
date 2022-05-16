@@ -9,10 +9,10 @@ type GameState struct {
 	Size int
 	Grid [][]int
 
-	Weight float32 // a weight of a generated random tile state
+	Weight float64 // a weight of a generated random tile state
 }
 
-func NewState(size int, grid [][]int, weight float32) GameState {
+func NewState(size int, grid [][]int, weight float64) GameState {
 	return GameState{Size: size, Grid: grid, Weight: weight}
 }
 
@@ -42,23 +42,13 @@ func (s *GameState) GenerateRandomTileSuccessorState() []GameState {
 	return arr
 }
 
-func (s *GameState) TileSum() int {
-	sum := 0
-	for i := 0; i < len(s.Grid); i++ {
-		for j := 0; j < len(s.Grid[i]); j++ {
-			sum += s.Grid[i][j] * s.Grid[i][j]
-		}
-	}
-	return sum
-}
-
-func generateTileState(state GameState, x, y, tile int, weight float32) GameState {
+func generateTileState(state GameState, x, y, tile int, weight float64) GameState {
 	grid := utils.DeepCopy(state.Grid)
 	grid[x][y] = tile
 	return NewState(len(grid), grid, weight)
 }
 
-// move to move grid to
+// move to move grid to a direction
 func move(grid [][]int, direction Direction) [][]int {
 	data := utils.DeepCopy(grid)
 	size := len(grid)

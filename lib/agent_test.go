@@ -3,13 +3,13 @@ package lib
 import "testing"
 
 func mockGameState() GameState {
-	return GameState{Size: 4, Grid: [][]int{{0, 0, 0, 0}, {0, 4, 16, 2}, {2, 8, 8, 8}, {4, 16, 64, 2}}}
+	return GameState{Size: 4, Grid: [][]int{{0, 0, 16, 0}, {0, 4, 0, 2}, {2, 8, 8, 8}, {4, 16, 64, 2}}}
 }
 
 func TestAgent_GetAction(t *testing.T) {
 	type fields struct {
 		depth     int
-		evaluator Evaluator
+		evaluator heuristic
 	}
 	type args struct {
 		gameState GameState
@@ -18,9 +18,9 @@ func TestAgent_GetAction(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   Direction
+		isNot  Direction
 	}{
-		{name: "can get an action", fields: fields{depth: 2, evaluator: BaseEvaluator()}, args: args{mockGameState()}, want: LEFT},
+		{name: "can get an action", fields: fields{depth: 2, evaluator: MonotonicSmoothnessHeuristic()}, args: args{mockGameState()}, isNot: NONE},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -28,8 +28,8 @@ func TestAgent_GetAction(t *testing.T) {
 				depth:     tt.fields.depth,
 				evaluator: tt.fields.evaluator,
 			}
-			if got := a.GetAction(tt.args.gameState); got != tt.want {
-				t.Errorf("GetAction() = %v, want %v", got, tt.want)
+			if got := a.GetAction(tt.args.gameState); got == tt.isNot {
+				t.Errorf("GetAction() = %v, isNot %v", got, tt.isNot)
 			}
 		})
 	}
