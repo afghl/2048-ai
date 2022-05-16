@@ -16,12 +16,9 @@ func NewAgent(depth int) *Agent {
 func (a *Agent) GetAction(gameState GameState) Direction {
 	act := NONE
 	max := math.MinInt
-	for _, action := range gameState.GetLegalActions() {
-		// TODO: some state might not be valid.
-		nextState := gameState.SuccessorState(action)
+	for action, nextState := range gameState.GenerateDirectionSuccessorState() {
 		//fmt.Printf("GetAction..next state is: %v, action: %v\n", nextState.Grid, action)
-		v := a.value(nextState, false, 0)
-		if v > max {
+		if v := a.value(nextState, false, 0); v > max {
 			max = v
 			act = action
 		}
@@ -46,8 +43,7 @@ func (a *Agent) value(state GameState, directionMove bool, depth int) int {
 
 func (a *Agent) maxValue(gameState GameState, depth int) int {
 	max := math.MinInt
-	for _, action := range gameState.GetLegalActions() {
-		nextState := gameState.SuccessorState(action)
+	for _, nextState := range gameState.GenerateDirectionSuccessorState() {
 		//fmt.Printf("maxValue..next state is: %v, action: %v\n", nextState.Grid, Direction(action))
 		if v := a.value(nextState, false, depth); v > max {
 			max = v
@@ -58,7 +54,7 @@ func (a *Agent) maxValue(gameState GameState, depth int) int {
 
 func (a *Agent) avgValue(gameState GameState, depth int) int {
 	sum := float32(0)
-	tileStates := gameState.GenerateRandomTileState()
+	tileStates := gameState.GenerateRandomTileSuccessorState()
 
 	for _, state := range tileStates {
 		//fmt.Printf("get a value of a tile state: %v, depth: %v \n", state, depth)

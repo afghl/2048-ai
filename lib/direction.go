@@ -11,4 +11,4 @@ const (
 	NONE Direction = -1
 )
 
-var actions = []Direction{UP, RIGHT, DOWN, LEFT}
+var directions = []Direction{UP, RIGHT, DOWN, LEFT}

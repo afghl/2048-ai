@@ -16,19 +16,19 @@ func NewState(size int, grid [][]int, weight float32) GameState {
 	return GameState{Size: size, Grid: grid, Weight: weight}
 }
 
-// GetLegalActions return a list of legal actions
-func (s *GameState) GetLegalActions() []Direction {
-	return actions
+func (s *GameState) GenerateDirectionSuccessorState() map[Direction]GameState {
+	rst := make(map[Direction]GameState, 0)
+	for _, direction := range directions {
+		grid := move(s.Grid, direction)
+		if !utils.Equal(s.Grid, grid) {
+			rst[direction] = NewState(s.Size, grid, 1)
+		}
+	}
+	return rst
 }
 
-// SuccessorState get a successor state of action
-func (s *GameState) SuccessorState(direction Direction) GameState {
-	grid := move(s.Grid, direction)
-	return NewState(s.Size, grid, 1)
-}
-
-// GenerateRandomTileState for current state s, generate its successor state by create random tile
-func (s *GameState) GenerateRandomTileState() []GameState {
+// GenerateRandomTileSuccessorState for current state s, generate its successor state by create random tile
+func (s *GameState) GenerateRandomTileSuccessorState() []GameState {
 	arr := make([]GameState, 0)
 	for i := 0; i < len(s.Grid); i++ {
 		for j := 0; j < len(s.Grid[i]); j++ {

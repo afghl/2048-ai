@@ -62,9 +62,9 @@ func ai(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 	agent := lib.NewAgent(4)
-	for i := 0; i < 100000; i++ {
+	for {
 		_, p, err := ws.ReadMessage()
-		timer := time.NewTimer(200 * time.Millisecond)
+		timer := time.NewTimer(100 * time.Millisecond)
 		if err != nil {
 			break
 		}
@@ -75,6 +75,7 @@ func ai(w http.ResponseWriter, r *http.Request) {
 		}
 		state := lib.NewState(m.Size, m.Grid, 1)
 		act := agent.GetAction(state)
+		fmt.Printf("get action: %v\n", act)
 		r, _ := json.Marshal(rsp{Act: int(act)})
 		<-timer.C
 		if err := ws.WriteMessage(websocket.TextMessage, r); err != nil {
